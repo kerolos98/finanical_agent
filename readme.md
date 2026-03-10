@@ -1,11 +1,12 @@
 ---
-title: Finance Fox
+title: Financial Agent
 emoji: 🦊
-colorFrom: orange
-colorTo: red
+colorFrom: green
+colorTo: blue
 sdk: docker
+app_port: 7860
 pinned: false
 ---
 
-# Finance Fox
-Automated financial assistant using MCP and qwen3:1.7b.
+# Financial Agent
+Financial analyst using Qwen and MCP.
