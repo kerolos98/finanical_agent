@@ -4,8 +4,7 @@ emoji: 🦊
 colorFrom: green
 colorTo: blue
 sdk: docker
-app_port: 7860
-pinned: false
+app_port: 8501
 ---
 
 # Financial Agent
