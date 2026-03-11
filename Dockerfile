@@ -20,4 +20,4 @@ EXPOSE 8501
 RUN chmod +x start.sh
 
 # Start the app
-CMD ["./start.sh"]
+CMD ["/bin/bash", "./start.sh"]

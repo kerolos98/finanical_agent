@@ -1,23 +1,27 @@
+#!/bin/bash
+
+# Start the Ollama server in the background
 ollama serve &
 OLLAMA_PID=$!
 
-# Wait for API
+# Wait for API to be responsive
 echo "Waiting for Ollama API..."
 until curl -s localhost:11434/api/tags > /dev/null; do
   sleep 2
 done
 
-# Pull and prewarm model
+# Pull the model
 echo "Pulling qwen3:1.7b..."
 ollama pull qwen3:1.7b
 
+# Pre-warm the model (Loads it into RAM immediately)
 echo "Pre-warming model..."
 curl -X POST http://localhost:11434/api/generate -H "Content-Type: application/json" \
--d '{"model": "qwen3:1.7b", "prompt": "", "keep_alive": -1}'
+-d '{"model": "qwen3:1.7b", "prompt": "hi", "keep_alive": -1}'
 
-# Launch Streamlit
+# Launch Streamlit on the standard HF port
 echo "Launching Finance Fox..."
 streamlit run app/app_ui.py --server.port 8501 --server.address 0.0.0.0
 
-# Keep Ollama running if Streamlit stops
+# Keep the script alive as long as Ollama is running
 wait $OLLAMA_PID
