@@ -21,7 +21,7 @@ curl -X POST http://localhost:11434/api/generate -H "Content-Type: application/j
 
 # Launch Streamlit on the standard HF port
 echo "Launching Finance Fox..."
-streamlit run app/app_ui.py --server.port 8501 --server.address 0.0.0.0
+streamlit run app_ui.py --server.port 8501 --server.address 0.0.0.0
 
 # Keep the script alive as long as Ollama is running
 wait $OLLAMA_PID
