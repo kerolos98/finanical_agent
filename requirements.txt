@@ -5,3 +5,6 @@ streamlit==1.55.0
 google-genai==1.2.0
 asyncio
 requests
+pandas
+numpy
+yfinance
