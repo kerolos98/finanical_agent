@@ -1,0 +1,25 @@
+name: Deploy to HuggingFace
+
+on:
+  push:
+    branches: main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check repo
+        uses: actions/checkout@v4
+      - name: Install git-lfs
+        run: |
+          git lfs install
+      - name: Push to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+
+          git remote add hf https://user:$HF_TOKEN@huggingface.co/spaces/kerolos98/financial-agent
+
+          git push hf main --force
