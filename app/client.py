@@ -92,7 +92,7 @@ class MCPClient:
             ]
 
             extraction_resp = ollama.chat(
-                model="qwen2.5:3b", messages=extraction_messages
+                model="qwen2.5:1.5b", messages=extraction_messages
             )
 
             ticker_candidate = extraction_resp["message"]["content"].strip().upper()
@@ -151,7 +151,7 @@ class MCPClient:
 
         while True:
             response = ollama.chat(
-                model="qwen3:1.7b", messages=messages, tools=ollama_tools,keep_alive=-1
+                model="qwen2.5:1.5b", messages=messages, tools=ollama_tools,keep_alive=-1
             )
 
             message = response["message"]
