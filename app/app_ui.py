@@ -36,7 +36,7 @@ connected = False
 async def async_interact(query):
     global connected
     if not connected:
-        await agent_client.connect_to_server(r"./server/finance_server.py")
+        await agent_client.connect_to_server(r"server/finance_server.py")
         connected = True
     # run the query and return result
     return await agent_client.ollama_process_query(query)
