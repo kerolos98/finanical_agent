@@ -24,35 +24,31 @@ class MCPClient:
         self.gemini = genai.Client(api_key=os.getenv("GEMINI_KEY")) if os.getenv("GEMINI_KEY") else None
 
     async def connect_to_server(self, server_script_path: str):
-
         is_python = server_script_path.endswith(".py")
         is_js = server_script_path.endswith(".js")
-
+    
         if not (is_python or is_js):
             raise ValueError("Server script must be a .py or .js file")
-
+    
         command = sys.executable if is_python else "node"
-
+    
         server_params = StdioServerParameters(
             command=command, args=[server_script_path], env=None
         )
-
-        stdio_transport = await self.exit_stack.enter_async_context(
-            stdio_client(server_params)
-        )
-
-        self.stdio, self.write = stdio_transport
-
-        self.session = await self.exit_stack.enter_async_context(
-            ClientSession(self.stdio, self.write)
-        )
-
+    
+        # FIX: We enter the transport first
+        # This keeps the stdio_client alive across the session
+        self.transport = stdio_client(server_params)
+        self.stdio, self.write = await self.exit_stack.enter_async_context(self.transport)
+    
+        # FIX: Initialize the session within the same stack
+        self.session = ClientSession(self.stdio, self.write)
+        await self.exit_stack.enter_async_context(self.session)
+    
         await self.session.initialize()
-
+    
         response = await self.session.list_tools()
-        tools = response.tools
-
-        print("\nConnected to server with tools:", [tool.name for tool in tools])
+        print("\nConnected to server with tools:", [tool.name for tool in response.tools])
 
     async def ollama_process_query(self, query: str) -> str:
         """Process a query using Ollama + MCP tools with prompts, resources, and automatic ticker extraction."""
@@ -92,7 +88,7 @@ class MCPClient:
             ]
 
             extraction_resp = ollama.chat(
-                model="qwen2.5:1.5b", messages=extraction_messages
+                model="qwen2.5:1.5b", messages=extraction_messages, options={"temperature": 0.1}
             )
 
             ticker_candidate = extraction_resp["message"]["content"].strip().upper()
@@ -151,7 +147,7 @@ class MCPClient:
 
         while True:
             response = ollama.chat(
-                model="qwen2.5:1.5b", messages=messages, tools=ollama_tools,keep_alive=-1
+                model="qwen2.5:1.5b", messages=messages, tools=ollama_tools, options={"temperature": 0.1}, keep_alive=-1
             )
 
             message = response["message"]
@@ -262,8 +258,16 @@ class MCPClient:
                 print(f"\nError: {str(e)}")
 
     async def cleanup(self):
-        """Clean up resources"""
-        await self.exit_stack.aclose()
+        """Safe cleanup to prevent AnyIO RuntimeError"""
+        try:
+            # Close the stack in LIFO order
+            await self.exit_stack.aclose()
+        except RuntimeError as e:
+            if "cancel scope" in str(e):
+                # This suppresses the noisy AnyIO error during forced shutdown
+                pass
+            else:
+                raise e
 
 
 async def main():
