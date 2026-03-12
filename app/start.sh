@@ -11,13 +11,13 @@ until curl -s localhost:11434/api/tags > /dev/null; do
 done
 
 # Pull the model
-echo "Pulling qwen3:1.7b..."
-ollama pull qwen3:1.7b
+echo "Pulling qwen2.5:1.5b..."
+ollama pull qwen2.5:1.5b
 
 # Pre-warm the model (Loads it into RAM immediately)
 echo "Pre-warming model..."
 curl -X POST http://localhost:11434/api/generate -H "Content-Type: application/json" \
--d '{"model": "qwen3:1.7b", "prompt": "hi", "keep_alive": -1}'
+-d '{"model": "qwen2.5:1.5b", "prompt": "hi", "keep_alive": -1}'
 
 # Launch Streamlit on the standard HF port
 echo "Launching Finance Fox..."
