@@ -12,12 +12,12 @@ done
 
 # Pull the model
 echo "Pulling llama3.2:1b..."
-ollama pull llama3.2:1b
+ollama pull qwen3:0.6b
 
 # Pre-warm the model (Loads it into RAM immediately)
 echo "Pre-warming model..."
 curl -X POST http://localhost:11434/api/generate -H "Content-Type: application/json" \
--d '{"model": "qwen2.5:1.5b", "prompt": "hi", "keep_alive": -1}'
+-d '{"model": "qwen3:0.6b", "prompt": "hi", "keep_alive": -1}'
 
 # Launch Streamlit on the standard HF port
 echo "Launching Finance Fox..."
