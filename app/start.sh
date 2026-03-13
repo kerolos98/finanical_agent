@@ -11,8 +11,8 @@ until curl -s localhost:11434/api/tags > /dev/null; do
 done
 
 # Pull the model
-echo "Pulling qwen2.5:1.5b..."
-ollama pull qwen2.5:1.5b
+echo "Pulling llama3.2:1b..."
+ollama pull llama3.2:1b
 
 # Pre-warm the model (Loads it into RAM immediately)
 echo "Pre-warming model..."
