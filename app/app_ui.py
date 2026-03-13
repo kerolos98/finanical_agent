@@ -10,7 +10,7 @@ import tempfile
 @st.cache_resource
 def load_whisper():
     # 'int8' quantization makes this very fast even on old CPUs
-    return WhisperModel("distil-small.en" "", device="cpu", compute_type="int8")
+    return WhisperModel("distil-small.en", device="cpu", compute_type="int8")
 
 
 whisper_model = load_whisper()
